@@ -72,20 +72,20 @@ optimiser = optim.Adam(model.parameters(), lr=learning_rate)
 #TODO create a train_model() function
 for epochs in range(num_epochs):
 	for batch_idx, (data, targets) in enumerate(train_data_loader):
-	#Get data to Cuda if possible
-	data = data.to(device=device)
-	targets = targets.to(device=device)
+		#Get data to Cuda if possible
+		data = data.to(device=device)
+		targets = targets.to(device=device)
         
-	#forward propagation
-	scores = model(data)
-	loss = criterion(scores, targets)
+		#forward propagation
+		scores = model(data)
+		loss = criterion(scores, targets)
 
-	#backward propagation
-	optimiser.zero_grad()
-	loss.backward()
+		#backward propagation
+		optimiser.zero_grad()
+		loss.backward()
 
-        #gradient descent
-	optimiser.step()
+        	#gradient descent
+		optimiser.step()
         
 # Check accuracy on training & test data
 
