@@ -30,7 +30,7 @@ class ConvNet(nn.Module):
 		return x
 
 # Set device
-device = torch.device('cuda' if torch.cuda_is_available() else 'cpu')
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Hyperparameters
 input_channels = 1
