@@ -1,2 +1,5 @@
-# GSN_projekt_Tur-Kwi
+# GSN - projekt_Tur-Kwi
+Jakub Turliński, Damian Kwiek  
 Projekt zaliczeniowy z przedmiotu Głębokie Sieci Neuronowe. Semestr 21Z
+
+Temat: Klasyfikacja gatunków muzycznych
