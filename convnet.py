@@ -27,7 +27,7 @@ class ConvNet(nn.Module):
 		x = self.fc1(x)
 		x = F.softmax(x)
 		x = self.fc2(x)
-	return x
+		return x
 
 # Set device
 device = torch.device('cuda' if torch.cuda_is_available() else 'cpu')
