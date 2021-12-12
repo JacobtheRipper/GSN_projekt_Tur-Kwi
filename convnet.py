@@ -12,24 +12,24 @@ import torchvision.transforms as transforms # Transformations that can be perfor
 
 # TODO improve model by adding dropout and SVM at the end
 class ConvNet(nn.Module):
-	def __init(self, input_channels=1, num_classes=8):
-		super(ConvNet, self).__init__()
-		self.conv1 = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(5, 5), stride=1, padding=2)  # output's shape is equal to its input shape
-		self.max_pool = nn.MaxPool2d(kernel_size=(2, 2), stride=2)  # downsampling from 256x16 to 128x8 or from 128x8 to 64x4
-		self.conv2 = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(5, 5), stride=1, padding=2)  # same as conv1
-		self.fc1 = nn.Linear(in_features=64*4*1, out_features=500)  # in_features = image_size*out_channels
-		self.fc2 = nn.Linear(in_features=500, out_features=num_classes)
-	
-	def forward(self, x):
-		x = F.relu(self.conv1(x))
-		x = self.max_pool(x)
-		x = F.relu(self.conv2(x))
-		x = self.max_pool(x)
-		x = x.reshape(x.shape[0], -1)
-		x = self.fc1(x)
-		x = F.softmax(x)
-		x = self.fc2(x)
-		return x
+    def __init(self, input_channels=1, num_classes=8):
+        super(ConvNet, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(5, 5), stride=1, padding=2)  # output's shape is equal to its input shape
+        self.max_pool = nn.MaxPool2d(kernel_size=(2, 2), stride=2)  # downsampling from 256x16 to 128x8 or from 128x8 to 64x4
+        self.conv2 = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(5, 5), stride=1, padding=2)  # same as conv1
+        self.fc1 = nn.Linear(in_features=64*4*1, out_features=500)  # in_features = image_size*out_channels
+        self.fc2 = nn.Linear(in_features=500, out_features=num_classes)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        x = self.max_pool(x)
+        x = F.relu(self.conv2(x))
+        x = self.max_pool(x)
+        x = x.reshape(x.shape[0], -1)
+        x = self.fc1(x)
+        x = F.softmax(x)
+        x = self.fc2(x)
+        return x
 
 #Test code to check the size of the output tensor
 x = torch.randn(64, 1, 256, 16)
