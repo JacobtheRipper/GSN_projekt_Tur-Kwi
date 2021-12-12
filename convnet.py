@@ -19,7 +19,7 @@ class ConvNet(nn.Module):
 		self.conv2 = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(5, 5), stride=1, padding=2)  # same as conv1
 		self.fc1 = nn.Linear(in_features=64*4*1, out_features=500)  # in_features = image_size*out_channels
 		self.fc2 = nn.Linear(in_features=500, out_features=num_classes)
-	
+		
 	def forward(self, x):
 		x = F.relu(self.conv1(x))  # raises an error
 		x = self.max_pool(x)
