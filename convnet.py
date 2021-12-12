@@ -31,16 +31,16 @@ class ConvNet(nn.Module):
         output = fc1(output)
         output = F.softmax(output)
         output = fc2(output)
-		'''
-		output = F.relu(self.conv1(input))  # raises an error
-		output = self.max_pool(output)
-		output = F.relu(self.conv2(output))
-		output = self.max_pool(output)
-		output = x.reshape(x.shape[0], -1)
-		output = self.fc1(output)
-		output = F.softmax(output)
-		output = self.fc2(output)
-		'''
+        '''
+        output = F.relu(self.conv1(input))  # raises an error
+        output = self.max_pool(output)
+        output = F.relu(self.conv2(output))
+        output = self.max_pool(output)
+        output = x.reshape(x.shape[0], -1)
+        output = self.fc1(output)
+        output = F.softmax(output)
+        output = self.fc2(output)
+        '''
         return output
 
 #Test code to check the size of the output tensor
