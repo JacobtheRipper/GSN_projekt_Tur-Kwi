@@ -14,9 +14,9 @@ import torchvision.transforms as transforms # Transformations that can be perfor
 class ConvNet(nn.Module):
     def __init(self, input_channels=1, num_classes=8):
         super(ConvNet, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels=input_channels, out_channels=1, kernel_size=(5, 5), stride=1, padding=2)  # output's shape is equal to its input shape
-        self.max_pool = nn.MaxPool2d(kernel_size=(2, 2), stride=2)  # downsampling from 256x16 to 128x8 or from 128x8 to 64x4
-        self.conv2 = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(5, 5), stride=1, padding=2)  # same as conv1
+        self.conv1 = nn.Conv2d(in_channels=input_channels, out_channels=1, kernel_size=(5, 5), stride=(1,1), padding=(2,2))  # output's shape is equal to its input shape
+        self.max_pool = nn.MaxPool2d(kernel_size=(2, 2), stride=(2,2))  # downsampling from 256x16 to 128x8 or from 128x8 to 64x4
+        self.conv2 = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(5, 5), stride=(1,1), padding=(2,2))  # same as conv1
         self.fc1 = nn.Linear(in_features=64*4*1, out_features=500)  # in_features = image_size*out_channels
         self.fc2 = nn.Linear(in_features=500, out_features=num_classes)
 
