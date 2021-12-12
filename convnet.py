@@ -20,16 +20,16 @@ class ConvNet(nn.Module):
 		self.fc1 = nn.Linear(in_features=64*4*1, out_features=500)  # in_features = image_size*out_channels
 		self.fc2 = nn.Linear(in_features=500, out_features=num_classes)
 		
-	def forward(self, x):
-		x = F.relu(self.conv1(x))  # raises an error
-		x = self.max_pool(x)
-		x = F.relu(self.conv2(x))
-		x = self.max_pool(x)
-		x = x.reshape(x.shape[0], -1)
-		x = self.fc1(x)
-		x = F.softmax(x)
-		x = self.fc2(x)
-		return x
+	def forward(self, input):
+		output = F.relu(self.conv1(input))  # raises an error
+		output = self.max_pool(output)
+		output = F.relu(self.conv2(output))
+		output = self.max_pool(output)
+		output = x.reshape(x.shape[0], -1)
+		output = self.fc1(output)
+		output = F.softmax(output)
+		output = self.fc2(output)
+		return output
 
 #Test code to check the size of the output tensor
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
