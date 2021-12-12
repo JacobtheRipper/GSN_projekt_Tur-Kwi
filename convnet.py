@@ -21,7 +21,7 @@ class ConvNet(nn.Module):
 		self.fc2 = nn.Linear(in_features=500, out_features=num_classes)
 	
 	def forward(self, input):
-		output = conv1(input)
+		output = self.conv1(input)
 		output = F.relu(output)  # raises an error
 		output = max_pool(output)
 		output = conv2(input)
