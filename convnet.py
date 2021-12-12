@@ -49,7 +49,7 @@ num_epochs = 1
 
 # Load data from dataset
 # TODO write a custom data loader
-composed_transform = transform=transforms.Compose([transforms.Resize(256,16), transforms.ToTensor()])
+composed_transform = transform=transforms.Compose([transforms.Resize(size=[256, 16]), transforms.ToTensor()])
 
 train_dataset = datasets.MNIST( 
     root="dataset/",
