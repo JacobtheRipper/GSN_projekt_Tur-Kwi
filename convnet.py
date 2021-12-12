@@ -35,6 +35,8 @@ class ConvNet(nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = ConvNet().to(device)
 x = torch.randn(64, 1, 256, 16)
+print(model)
+print(model(x))
 print(model(x).shape)
 '''
 # Set device
