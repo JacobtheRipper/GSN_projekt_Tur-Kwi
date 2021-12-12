@@ -9,6 +9,8 @@ import torchvision.transforms as transforms # Transformations that can be perfor
 # Convolutional Neural Network model based on the architecture found in
 # "Exploring Data Augmentation to Improve Music Genre Classification with ConvNets" article
 # the input of this CNN is a grayscale 256x16 image patch derived from the spectrogram
+
+# TODO improve model by adding dropout and SVM at the end
 class ConvNet(nn.Module):
 	def __init(self, input_channels=1, num_classes=8):
 		super(ConvNet, self).__init__()
@@ -29,6 +31,11 @@ class ConvNet(nn.Module):
 		x = self.fc2(x)
 		return x
 
+#Test code to check the size of the output tensor
+model = ConvNet()
+x = torch.randn(64, 1, 256, 16)
+print(model(x).shape)
+'''
 # Set device
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -116,3 +123,4 @@ def check_accuracy(loader, model):
 
 check_accuracy(train_data_loader, model)
 check_accuracy(test_data_loader, model)
+'''
