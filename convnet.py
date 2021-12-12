@@ -31,12 +31,12 @@ class ConvNet(nn.Module):
         x = self.fc2(x)
         return x
 
-#Test code to check the size of the output tensor
+# Test code to check the size of the output tensor
+# TODO remove this code
 x = torch.randn(64, 1, 256, 16)
 model = ConvNet()
-print(model(x))
 print(model(x).shape)
-'''
+
 # Set device
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -79,49 +79,48 @@ optimiser = optim.Adam(model.parameters(), lr=learning_rate)
 # Train CNN
 #TODO create a train_model() function
 for epochs in range(num_epochs):
-	for batch_idx, (data, targets) in enumerate(train_data_loader):
-		#Get data to Cuda if possible
-		data = data.to(device=device)
-		targets = targets.to(device=device)
+    for batch_idx, (data, targets) in enumerate(train_data_loader):
+        #Get data to Cuda if possible
+        data = data.to(device=device)
+        targets = targets.to(device=device)
         
-		#forward propagation
-		scores = model(data)
-		loss = criterion(scores, targets)
+        #forward propagation
+        scores = model(data)
+        loss = criterion(scores, targets)
 
-		#backward propagation
-		optimiser.zero_grad()
-		loss.backward()
+        #backward propagation
+        optimiser.zero_grad()
+        loss.backward()
 
-        	#gradient descent
-		optimiser.step()
+        #gradient descent
+        optimiser.step()
         
 # Check accuracy on training & test data
 
 def check_accuracy(loader, model):
-	if loader.dataset.train:
-		print("Checking accuracy on training data")
-	else:
-		print("Checking accuracy on test data")
+    if loader.dataset.train:
+        print("Checking accuracy on training data")
+    else:
+        print("Checking accuracy on test data")
 
-	num_correct = 0
-	num_samples = 0
-	model.eval()
+    num_correct = 0
+    num_samples = 0
+    model.eval()
 
-	with torch.no_grad():
-		for x, y in loader:
-			x = x.to(device=device)
-			y = y.to(device=device)
-			x = x.reshape(x.shape[0], -1)
+    with torch.no_grad():
+        for x, y in loader:
+            x = x.to(device=device)
+            y = y.to(device=device)
+            x = x.reshape(x.shape[0], -1)
 
-			scores = model(x)
-			_, predictions = scores.max(1)
-			num_correct += (predictions == y).sum()
-			num_samples += predictions.size(0)
+            scores = model(x)
+            _, predictions = scores.max(1)
+            num_correct += (predictions == y).sum()
+            num_samples += predictions.size(0)
 
-	print(f'Correctly classified examples: {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}')
+    print(f'Correctly classified examples: {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}')
 
-	model.train()
+    model.train()
 
 check_accuracy(train_data_loader, model)
 check_accuracy(test_data_loader, model)
-'''
