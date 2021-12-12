@@ -34,8 +34,6 @@ class ConvNet(nn.Module):
 #Test code to check the size of the output tensor
 x = torch.randn(64, 1, 256, 16)
 model = ConvNet()
-print(model)
-print(model.shape)
 print(model(x))
 print(model(x).shape)
 '''
