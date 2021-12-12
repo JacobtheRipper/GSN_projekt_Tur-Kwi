@@ -93,7 +93,7 @@ for epochs in range(num_epochs):
 
         #backward propagation
         optimiser.zero_grad()
-        loss.backward()
+        loss.backward()  # may crash if the number of target labels 'targets' number of classes
 
         #gradient descent
         optimiser.step()
