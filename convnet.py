@@ -34,7 +34,7 @@ class ConvNet(nn.Module):
 #Test code to check the size of the output tensor
 model = ConvNet()
 x = torch.randn(64, 1, 256, 16)
-print(x.shape)
+print(model(x).shape)
 '''
 # Set device
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
