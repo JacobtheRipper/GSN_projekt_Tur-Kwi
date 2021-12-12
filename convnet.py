@@ -49,10 +49,12 @@ num_epochs = 1
 
 # Load data from dataset
 # TODO write a custom data loader
+composed_transform = transform=transforms.Compose([transforms.Resize(size=[256,16], interpolation=InterpolationMode.BILINEAR), transforms.ToTensor()])
+
 train_dataset = datasets.MNIST( 
     root="dataset/",
     train=True,
-    transform=transforms.Compose([transforms.Resize(256,16),transforms.ToTensor(),]),
+    transform=composed_transform,
     download=True,
 )
 train_data_loader = DataLoader(
@@ -61,7 +63,7 @@ train_data_loader = DataLoader(
 test_dataset = datasets.MNIST(
     root="dataset/",
     train=False,
-    transform=transforms.Compose([transforms.Resize(256,16),transforms.ToTensor(),]),
+    transform=composed_transform,
     download=True,
 )
 test_data_loader = DataLoader(
