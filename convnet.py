@@ -11,8 +11,9 @@ import torchvision.transforms as transforms # Transformations that can be perfor
 # the input of this CNN is a grayscale 256x16 image patch derived from the spectrogram
 
 # TODO improve model by adding dropout and SVM at the end
+# TODO number of classes should be equal to 8 not 10
 class ConvNet(nn.Module):
-    def __init__(self, input_channels=1, num_classes=8):
+    def __init__(self, input_channels=1, num_classes=10):
         super(ConvNet, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=input_channels, out_channels=1, kernel_size=(5, 5), stride=1, padding=2)  # output's shape is equal to its input shape
         self.max_pool = nn.MaxPool2d(kernel_size=(2, 2), stride=2)  # downsampling from 256x16 to 128x8 or from 128x8 to 64x4
