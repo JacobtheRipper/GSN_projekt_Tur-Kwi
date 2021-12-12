@@ -52,7 +52,7 @@ num_epochs = 1
 train_dataset = datasets.MNIST( 
     root="dataset/",
     train=True,
-    transform=transforms.ToTensor(),
+    transform=transforms.Compose([transforms.Resize(256,16),transforms.ToTensor(),]),
     download=True,
 )
 train_data_loader = DataLoader(
@@ -61,7 +61,7 @@ train_data_loader = DataLoader(
 test_dataset = datasets.MNIST(
     root="dataset/",
     train=False,
-    transform=transforms.ToTensor(),
+    transform=transforms.Compose([transforms.Resize(256,16),transforms.ToTensor(),]),
     download=True,
 )
 test_data_loader = DataLoader(
