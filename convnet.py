@@ -21,7 +21,7 @@ class ConvNet(nn.Module):
 		self.fc2 = nn.Linear(in_features=500, out_features=num_classes)
 	
 	def forward(self, x):
-		x = F.relu(self.conv1(x))  # raises an AttributeError
+		x = F.relu(self.conv1(x))  # raises an error
 		x = self.max_pool(x)
 		x = F.relu(self.conv2(x))
 		x = self.max_pool(x)
