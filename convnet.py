@@ -13,7 +13,7 @@ import torchvision.transforms as transforms # Transformations that can be perfor
 # TODO improve model by adding dropout and SVM at the end
 class ConvNet(nn.Module):
 	def __init(self, input_channels=1, num_classes=8):
-		super().__init__()  # super(ConvNet, self).__init__() USING PYTHON 3 syntax
+		super().__init__()
 		self.conv1 = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(5, 5), stride=1, padding=2)  # output's shape is equal to its input shape
 		self.max_pool = nn.MaxPool2d(kernel_size=(2, 2), stride=2)  # downsampling from 256x16 to 128x8 or from 128x8 to 64x4
 		self.conv2 = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(5, 5), stride=1, padding=2)  # same as conv1
@@ -21,6 +21,17 @@ class ConvNet(nn.Module):
 		self.fc2 = nn.Linear(in_features=500, out_features=num_classes)
 		
 	def forward(self, input):
+		output = self.conv1(input)
+		output = F.relu(output)  # raises an error
+		output = self.max_pool(output)
+		output = self.conv2(input)
+		output = F.relu(output)
+		output = self.max_pool(output)
+		output = x.reshape(x.shape[0], -1)
+		output = self.fc1(output)
+		output = F.softmax(output)
+		output = self.fc2(output)
+		'''
 		output = F.relu(self.conv1(input))  # raises an error
 		output = self.max_pool(output)
 		output = F.relu(self.conv2(output))
@@ -29,6 +40,7 @@ class ConvNet(nn.Module):
 		output = self.fc1(output)
 		output = F.softmax(output)
 		output = self.fc2(output)
+		'''
 		return output
 
 #Test code to check the size of the output tensor
