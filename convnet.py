@@ -97,7 +97,7 @@ data, targets = next(iter(train_data_loader))
 
 # Train CNN
 for epochs in range(num_epochs):
-    print(f "Epoch {epochs+1} out of {num_epochs}")
+    print(f"Epoch {epochs+1} out of {num_epochs} ")
     # TODO uncomment the for loop
     #for batch_idx, (data, targets) in enumerate(train_data_loader):
     #Get data to Cuda if possible
