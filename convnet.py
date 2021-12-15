@@ -28,7 +28,7 @@ class ConvNet(nn.Module):
         x = self.max_pool(x)
         x = x.reshape(x.shape[0], -1)
         x = self.fc1(x)
-        x = F.softmax(x)
+        x = F.dropout(F.relu(x), p=0.5, training=True, inplace=False)
         x = self.fc2(x)
         return x
 
@@ -38,9 +38,6 @@ x = torch.randn(64, 1, 256, 16)
 model = ConvNet()
 print(model(x).shape)
 
-# Set device
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
 # Hyperparameters
 input_channels = 1
 num_classes = 8
@@ -48,58 +45,13 @@ learning_rate = 0.001
 batch_size = 64
 num_epochs = 1
 
-# Load data from dataset
-# TODO write a custom data loader
-composed_transform = transform=transforms.Compose([transforms.Resize(size=[256, 16]), transforms.ToTensor()])
-
-train_dataset = datasets.MNIST( 
-    root="dataset/",
-    train=True,
-    transform=composed_transform,
-    download=True,
-)
-train_data_loader = DataLoader(
-    dataset=train_dataset, batch_size=batch_size, shuffle=True
-)
-test_dataset = datasets.MNIST(
-    root="dataset/",
-    train=False,
-    transform=composed_transform,
-    download=True,
-)
-test_data_loader = DataLoader(
-    dataset=test_dataset, batch_size=batch_size, shuffle=True
-)
+# Set device
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Initialise model
-# TODO initialise in Google Colab
 model = ConvNet().to(device)
 
-# Loss and optimiser
-criterion = nn.CrossEntropyLoss()
-optimiser = optim.Adam(model.parameters(), lr=learning_rate)
-
-# Train CNN
-#TODO create a train_model() function
-for epochs in range(num_epochs):
-    for batch_idx, (data, targets) in enumerate(train_data_loader):
-        #Get data to Cuda if possible
-        data = data.to(device=device)
-        targets = targets.to(device=device)
-        
-        #forward propagation
-        scores = model(data)
-        loss = criterion(scores, targets)
-
-        #backward propagation
-        optimiser.zero_grad()
-        loss.backward()  # may crash if the number of target labels 'targets' number of classes
-
-        #gradient descent
-        optimiser.step()
-        
-# Check accuracy on training & test data
-
+# Function for evaluation
 def check_accuracy(loader, model):
     if loader.dataset.train:
         print("Checking accuracy on training data")
@@ -124,5 +76,39 @@ def check_accuracy(loader, model):
 
     model.train()
 
+# Load data from dataset
+# TODO write a custom data loader
+# TODO apply correct data augmentation for the FMA dataset
+composed_transform = transforms.Compose([transforms.Resize(size=[256, 16]), transforms.ToTensor()])
+
+train_dataset = datasets.MNIST(root="dataset/", train=True, transform=composed_transform, download=True)
+train_data_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
+
+test_dataset = datasets.MNIST(root="dataset/", train=False, transform=composed_transform, download=True)
+test_data_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=True)
+
+# Loss and optimiser
+criterion = nn.CrossEntropyLoss()
+optimiser = optim.Adam(model.parameters(), lr=learning_rate)
+
+# Train CNN
+for epochs in range(num_epochs):
+    for batch_idx, (data, targets) in enumerate(train_data_loader):
+        #Get data to Cuda if possible
+        data = data.to(device=device)
+        targets = targets.to(device=device)
+        
+        #forward propagation
+        scores = model(data)
+        loss = criterion(scores, targets)
+
+        #backward propagation
+        optimiser.zero_grad()
+        loss.backward()  # may crash if the number of target labels is greater than the number of classes
+
+        #gradient descent
+        optimiser.step()
+        
+# Check accuracy on training & test data
 check_accuracy(train_data_loader, model)
 check_accuracy(test_data_loader, model)
