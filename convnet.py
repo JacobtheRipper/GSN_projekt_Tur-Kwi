@@ -10,7 +10,7 @@ import torchvision.transforms as transforms # Transformations that can be perfor
 # "Exploring Data Augmentation to Improve Music Genre Classification with ConvNets" article
 # the input of this CNN is a grayscale 256x16 image patch derived from the spectrogram
 
-# TODO improve model by adding dropout and SVM at the end
+# TODO improve model by adding SVM at the end
 # TODO number of classes should be equal to 8 not 10
 class ConvNet(nn.Module):
     def __init__(self, input_channels=1, num_classes=10):
@@ -42,8 +42,8 @@ print(model(x).shape)
 input_channels = 1
 num_classes = 8
 learning_rate = 0.001
-batch_size = 64
-num_epochs = 1
+batch_size = 16  # TODO change to another size e.g. 64 after overfitting a single batch
+num_epochs = 500  # TODO change to another number e.g. 80 after overfitting a single batch
 
 # Set device
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -91,23 +91,30 @@ test_data_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuff
 criterion = nn.CrossEntropyLoss()
 optimiser = optim.Adam(model.parameters(), lr=learning_rate)
 
+# Test code for overfitting a single batch
+# TODO remove the test code
+data, targets = next(iter(train_data_loader))
+
 # Train CNN
 for epochs in range(num_epochs):
-    for batch_idx, (data, targets) in enumerate(train_data_loader):
-        #Get data to Cuda if possible
-        data = data.to(device=device)
-        targets = targets.to(device=device)
+    print(f "Epoch {epochs+1} out of {num_epochs}")
+    # TODO uncomment the for loop
+    #for batch_idx, (data, targets) in enumerate(train_data_loader):
+    #Get data to Cuda if possible
+    data = data.to(device=device)
+    targets = targets.to(device=device)
         
-        #forward propagation
-        scores = model(data)
-        loss = criterion(scores, targets)
+    #forward propagation
+    scores = model(data)
+    loss = criterion(scores, targets)
 
-        #backward propagation
-        optimiser.zero_grad()
-        loss.backward()  # may crash if the number of target labels is greater than the number of classes
+    #backward propagation
+    optimiser.zero_grad()
+    loss.backward()  # may crash if the number of target labels is greater than the number of classes
+    print(loss)  # optional line for testing the CNN
 
-        #gradient descent
-        optimiser.step()
+    #gradient descent
+    optimiser.step()
         
 # Check accuracy on training & test data
 check_accuracy(train_data_loader, model)
