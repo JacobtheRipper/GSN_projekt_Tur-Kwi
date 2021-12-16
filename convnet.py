@@ -42,8 +42,9 @@ print(model(x).shape)
 input_channels = 1
 num_classes = 8
 learning_rate = 0.001
-batch_size = 64  # TODO change to another size e.g. 64 after overfitting a single batch
-num_epochs = 10  # TODO change to another number e.g. 80 after overfitting a single batch
+batch_size = 64
+num_epochs = 10  # TODO change to another number e.g. 50 after overfitting a single batch
+load_model = False  # enables loading from a given checkpoint
 
 # Set device
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -76,9 +77,18 @@ def check_accuracy(loader, model):
 
     model.train()
 
+def save_checkpoint(state, current_epoch):
+    print(f"===> Saving checkpoint at epoch: {current_epoch}")
+    filename = "convnet_checkpoint_epoch_" + str(current_epoch) + ".pt"
+    torch.save(state, filename)
+
+def load_checkpoint(state):
+    print(f"===> Loading checkpoint at epoch: {current_epoch}")
+    model.load_state_dict(state['state_dict'])
+    optimiser.load_state_dict(state['optimizer'])
+
 # Load data from dataset
 # TODO write a custom data loader
-# TODO apply correct data augmentation for the FMA dataset
 composed_transform = transforms.Compose([transforms.Resize(size=[256, 16]), transforms.ToTensor()])
 
 train_dataset = datasets.MNIST(root="dataset/", train=True, transform=composed_transform, download=True)
@@ -87,11 +97,31 @@ train_data_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shu
 test_dataset = datasets.MNIST(root="dataset/", train=False, transform=composed_transform, download=True)
 test_data_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=True)
 
+# Load custom data from modified FMA small dataset
+# TODO make sure to use correct data directories
+# TODO data should be split according to 80/10/10% (training/validation/test) ratio proposed by FMA dataset authors
+# TODO apply correct data augmentation for the FMA dataset
+'''
+dataset = customDataset(annotation_file=fma_small.csv, data_dir, transform=composed_transform)
+train_dataset, validation_dataset, test_dataset = torch.utils.data.random_split(dataset, [6400, 800, 800])  # using 80/10/10% (training/validation/test) ratio
+
+train_data_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
+validation_data_loader = DataLoader(dataset=validation_dataset, batch_size=batch_size, shuffle=True)
+test_data_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=True)
+'''
+
 # Loss and optimiser
 criterion = nn.CrossEntropyLoss()
 optimiser = optim.Adam(model.parameters(), lr=learning_rate)
 
 # Train CNN
+
+# optional model loading from a .pt file. A correct filename should be used
+'''
+if load_model:
+    load_checkpoint(torch.load("convnet_epoch_20.pt"))
+'''
+
 for epochs in range(num_epochs):
     print(f"Epoch {epochs+1} out of {num_epochs} ")
     for batch_idx, (data, targets) in enumerate(train_data_loader):
@@ -102,7 +132,6 @@ for epochs in range(num_epochs):
         #forward propagation
         scores = model(data)
         loss = criterion(scores, targets)
-        print(loss)  # optional line for testing the CNN
 
         #backward propagation
         optimiser.zero_grad()
@@ -110,7 +139,16 @@ for epochs in range(num_epochs):
 
         #gradient descent
         optimiser.step()
-        
-# Check accuracy on training & test data
+    print(loss)  # optional line for testing the CNN
+    
+    # optional checkpoint saving every 5 epochs
+    '''
+    if (epochs+1) % 5 == 0:
+        model_state = {'state_dict': model.state_dict(), 'optimizer': optimiser.state_dict()}
+        save_checkpoint(state=model_state, current_epoch=epochs+1)
+    '''
+
+# Check accuracy on training, validation & test data
 check_accuracy(train_data_loader, model)
+# check_accuracy(validation_data_loader, model)
 check_accuracy(test_data_loader, model)
