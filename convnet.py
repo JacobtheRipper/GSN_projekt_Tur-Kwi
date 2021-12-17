@@ -12,7 +12,7 @@ input_channels = 1
 num_classes = 8
 learning_rate = 0.001
 batch_size = 64
-num_epochs = 35
+num_epochs = 50
 load_model = False  # enables loading from a given checkpoint
 load_from_epoch = 20  # loads model that has been trained for 'load_from_epoch' epochs
 
