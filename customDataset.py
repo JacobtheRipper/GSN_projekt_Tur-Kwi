@@ -6,7 +6,7 @@ from skimage import io
 
 class customDataset(Dataset):
     def __init__(self, annotation_file, data_dir, transform=None):
-        self.annotation = pd.read_csv(annotation_file)
+        self.annotation = pd.read_csv(annotation_file, header=None)
         self.data_dir = data_dir
         self.transform = transform
 
@@ -20,7 +20,7 @@ class customDataset(Dataset):
         
         str_label = self.annotation.iloc[index, 1]
         # Convert string labels to integers and then tensors
-        label = tensor(string_to_int_label(str_label))
+        label = tensor(self.string_to_int_label(str_label))
 
         if self.transform:
             image = self.transform(image)
@@ -28,20 +28,20 @@ class customDataset(Dataset):
         return (image, label)
     
     # Convert string labels to integers
-    def string_to_int_label(str):
+    def string_to_int_label(self, str):
         if str == "Electronic":
             return 0
-        else if str == "Experimental":
+        elif str == "Experimental":
             return 1
-        else if str == "Folk":
+        elif str == "Folk":
             return 2
-        else if str == "Hip-Hop":
+        elif str == "Hip-Hop":
             return 3
-        else if str == "Instrumental":
+        elif str == "Instrumental":
             return 4
-        else if str == "International":
+        elif str == "International":
             return 5
-        else if str == "Pop":
+        elif str == "Pop":
             return 6
-        else if str == "Rock":
+        elif str == "Rock":
             return 7
