@@ -31,17 +31,17 @@ class customDataset(Dataset):
     def string_to_int_label(str):
         if str == "Electronic":
             return 0
-        if str == "Experimental":
+        else if str == "Experimental":
             return 1
-        if str == "Folk":
+        else if str == "Folk":
             return 2
-        if str == "Hip-Hop":
+        else if str == "Hip-Hop":
             return 3
-        if str == "Instrumental":
+        else if str == "Instrumental":
             return 4
-        if str == "International":
+        else if str == "International":
             return 5
-        if str == "Pop":
+        else if str == "Pop":
             return 6
-        if str == "Rock":
+        else if str == "Rock":
             return 7
