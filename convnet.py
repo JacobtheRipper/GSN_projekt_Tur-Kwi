@@ -8,25 +8,25 @@ import torchvision.transforms as transforms # Transformations that can be perfor
 
 # Hyperparameters
 input_channels = 1
-num_classes = 10  # TODO number of classes should be equal to 8 not 10
+num_classes = 8
 learning_rate = 0.001
 batch_size = 64
-num_epochs = 10  # TODO change to another number e.g. 50 after overfitting a single batch
+num_epochs = 30
 load_model = False  # enables loading from a given checkpoint
 load_from_epoch = 20  # loads model that has been trained for 'load_from_epoch' epochs
 
 # Convolutional Neural Network model based on the architecture found in
 # "Exploring Data Augmentation to Improve Music Genre Classification with ConvNets" article
-# the input of this CNN is a grayscale 256x16 image patch derived from the spectrogram
+# the input of this CNN is a grayscale 64x192 image containing mel spectrogram
 
 # TODO improve model by adding SVM at the end
 class ConvNet(nn.Module):
     def __init__(self, input_channels=input_channels, num_classes=num_classes):
         super(ConvNet, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=input_channels, out_channels=1, kernel_size=(5, 5), stride=1, padding=2)  # output's shape is equal to its input shape
-        self.max_pool = nn.MaxPool2d(kernel_size=(2, 2), stride=2)  # downsampling from 256x16 to 128x8 or from 128x8 to 64x4
+        self.max_pool = nn.MaxPool2d(kernel_size=(2, 2), stride=2)  # downsampling from 64x192 to 32x96 or from 32x96 to 16x48
         self.conv2 = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=(5, 5), stride=1, padding=2)  # same as conv1
-        self.fc1 = nn.Linear(in_features=64*4*1, out_features=500)  # in_features = image_size*out_channels
+        self.fc1 = nn.Linear(in_features=16*48*1, out_features=500)  # in_features = image_size*out_channels
         self.fc2 = nn.Linear(in_features=500, out_features=num_classes)
 
     def forward(self, x):
@@ -42,7 +42,7 @@ class ConvNet(nn.Module):
 
 # Test code to check the size of the output tensor
 # TODO remove this code
-x = torch.randn(64, 1, 256, 16)
+x = torch.randn(64, 1, 64, 192)
 model = ConvNet()
 print(model(x).shape)
 
@@ -82,7 +82,7 @@ def load_checkpoint(starting_epoch):
     state = torch.load(filename)
     model.load_state_dict(state['state_dict'])
     optimiser.load_state_dict(state['optimizer'])
-
+'''
 # Set device
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -102,7 +102,7 @@ test_data_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuff
 # TODO make sure to use correct data directories
 # TODO data should be split according to 80/10/10% (training/validation/test) ratio proposed by FMA dataset authors
 # TODO apply correct data augmentation for the FMA dataset
-'''
+
 composed_transform = transforms.Compose([transforms.Resize(size=[256, 16]), transforms.ToTensor()])
 
 dataset = customDataset(annotation_file=fma_small.csv, data_dir, transform=composed_transform)
@@ -111,7 +111,7 @@ train_dataset, validation_dataset, test_dataset = torch.utils.data.random_split(
 train_data_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
 validation_data_loader = DataLoader(dataset=validation_dataset, batch_size=batch_size, shuffle=True)
 test_data_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=True)
-'''
+
 
 # Loss and optimiser
 criterion = nn.CrossEntropyLoss()
@@ -120,10 +120,10 @@ optimiser = optim.Adam(model.parameters(), lr=learning_rate)
 # Train CNN
 
 # optional model loading from a .pt file. A correct filename should be used
-'''
+
 if load_model:
     load_checkpoint(load_from_epoch)
-'''
+
 
 for epochs in range(num_epochs):
     print(f"Epoch {epochs+1} out of {num_epochs} ")
@@ -145,13 +145,14 @@ for epochs in range(num_epochs):
     print(loss)  # optional line for testing the CNN
     
     # optional checkpoint saving every 5 epochs
-    '''
+
     if (epochs+1) % 5 == 0:
         model_state = {'state_dict': model.state_dict(), 'optimizer': optimiser.state_dict()}
         save_checkpoint(state=model_state, current_epoch=epochs+1)
-    '''
+
 
 # Check accuracy on training, validation & test data
 check_accuracy(train_data_loader, model)
 # check_accuracy(validation_data_loader, model)
 check_accuracy(test_data_loader, model)
+'''
