@@ -14,8 +14,7 @@ class customDataset(Dataset):
     def __len__(self):
         return len(self.annotation)
 
-    def __getItem__(self, index):
-        # TODO dataset path should be set for this code to work, also index 0 should contain images' names
+    def __getitem__(self, index):
         img_dir = os.path.join(self.data_dir, self.annotation.iloc[index, 0])
         image = io.imread(img_dir)
         label = tensor(int(self.annotation.iloc[index, 1]))
