@@ -6,14 +6,22 @@ from torch.utils.data import DataLoader # Gives easier dataset managment and cre
 import torchvision.datasets as datasets # Has standard datasets that can be imported more easily
 import torchvision.transforms as transforms # Transformations that can be performed on the dataset
 
+# Hyperparameters
+input_channels = 1
+num_classes = 10  # TODO number of classes should be equal to 8 not 10
+learning_rate = 0.001
+batch_size = 64
+num_epochs = 10  # TODO change to another number e.g. 50 after overfitting a single batch
+load_model = False  # enables loading from a given checkpoint
+load_from_epoch = 20  # loads model that has been trained for 'load_from_epoch' epochs
+
 # Convolutional Neural Network model based on the architecture found in
 # "Exploring Data Augmentation to Improve Music Genre Classification with ConvNets" article
 # the input of this CNN is a grayscale 256x16 image patch derived from the spectrogram
 
 # TODO improve model by adding SVM at the end
-# TODO number of classes should be equal to 8 not 10
 class ConvNet(nn.Module):
-    def __init__(self, input_channels=1, num_classes=10):
+    def __init__(self, input_channels=input_channels, num_classes=num_classes):
         super(ConvNet, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=input_channels, out_channels=1, kernel_size=(5, 5), stride=1, padding=2)  # output's shape is equal to its input shape
         self.max_pool = nn.MaxPool2d(kernel_size=(2, 2), stride=2)  # downsampling from 256x16 to 128x8 or from 128x8 to 64x4
@@ -37,20 +45,6 @@ class ConvNet(nn.Module):
 x = torch.randn(64, 1, 256, 16)
 model = ConvNet()
 print(model(x).shape)
-
-# Hyperparameters
-input_channels = 1
-num_classes = 8
-learning_rate = 0.001
-batch_size = 64
-num_epochs = 10  # TODO change to another number e.g. 50 after overfitting a single batch
-load_model = False  # enables loading from a given checkpoint
-
-# Set device
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-# Initialise model
-model = ConvNet().to(device)
 
 # Function for evaluation
 def check_accuracy(loader, model):
@@ -82,13 +76,20 @@ def save_checkpoint(state, current_epoch):
     filename = "convnet_checkpoint_epoch_" + str(current_epoch) + ".pt"
     torch.save(state, filename)
 
-def load_checkpoint(state):
-    print(f"===> Loading checkpoint at epoch: {current_epoch}")
+def load_checkpoint(starting_epoch):
+    print(f"===> Loading checkpoint at epoch: {starting_epoch}")
+    filename = "convnet_checkpoint_epoch_" + str(starting_epoch) + ".pt"
+    state = torch.load(filename)
     model.load_state_dict(state['state_dict'])
     optimiser.load_state_dict(state['optimizer'])
 
+# Set device
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+# Initialise model
+model = ConvNet().to(device)
+
 # Load data from dataset
-# TODO write a custom data loader
 composed_transform = transforms.Compose([transforms.Resize(size=[256, 16]), transforms.ToTensor()])
 
 train_dataset = datasets.MNIST(root="dataset/", train=True, transform=composed_transform, download=True)
@@ -102,6 +103,8 @@ test_data_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuff
 # TODO data should be split according to 80/10/10% (training/validation/test) ratio proposed by FMA dataset authors
 # TODO apply correct data augmentation for the FMA dataset
 '''
+composed_transform = transforms.Compose([transforms.Resize(size=[256, 16]), transforms.ToTensor()])
+
 dataset = customDataset(annotation_file=fma_small.csv, data_dir, transform=composed_transform)
 train_dataset, validation_dataset, test_dataset = torch.utils.data.random_split(dataset, [6400, 800, 800])  # using 80/10/10% (training/validation/test) ratio
 
@@ -119,7 +122,7 @@ optimiser = optim.Adam(model.parameters(), lr=learning_rate)
 # optional model loading from a .pt file. A correct filename should be used
 '''
 if load_model:
-    load_checkpoint(torch.load("convnet_epoch_20.pt"))
+    load_checkpoint(load_from_epoch)
 '''
 
 for epochs in range(num_epochs):
