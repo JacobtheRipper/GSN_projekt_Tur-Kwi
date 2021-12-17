@@ -12,7 +12,7 @@ input_channels = 1
 num_classes = 8
 learning_rate = 0.001
 batch_size = 64
-num_epochs = 30
+num_epochs = 35
 load_model = False  # enables loading from a given checkpoint
 load_from_epoch = 20  # loads model that has been trained for 'load_from_epoch' epochs
 
@@ -103,13 +103,11 @@ test_data_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuff
 
 # Load custom data from modified FMA small dataset
 # TODO make sure to use correct data directories
-# TODO data should be split according to 80/10/10% (training/validation/test) ratio proposed by FMA dataset authors
-# TODO apply correct data augmentation for the FMA dataset
 
 composed_transform = transforms.ToTensor()
 
-CSV_DIR = "data_annot.csv"
-SPECTR_DIR = "fma"
+CSV_DIR = "/dataset/content/fma/FMA_spectrograms/data_annot.csv"
+SPECTR_DIR = "/dataset/content/fma"
 
 dataset = customDataset(annotation_file=CSV_DIR, data_dir=SPECTR_DIR, transform=composed_transform)
 train_dataset, validation_dataset, test_dataset = torch.utils.data.random_split(dataset, [3576, 447, 447])  # using 80/10/10% (training/validation/test) ratio
@@ -148,10 +146,10 @@ for epochs in range(num_epochs):
 
         #gradient descent
         optimiser.step()
-    print(loss)  # optional line for testing the CNN
+    # print(loss)  # optional line for testing the CNN
     
     # optional checkpoint saving every 5 epochs
-    if (epochs+1) % 10 == 0:
+    if (epochs+1) % 5 == 0:
         model_state = {'state_dict': model.state_dict(), 'optimizer': optimiser.state_dict()}
         save_checkpoint(state=model_state, current_epoch=epochs+1)
 
