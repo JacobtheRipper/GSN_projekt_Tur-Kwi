@@ -48,8 +48,10 @@ print(model(x).shape)
 
 # Function for evaluation
 def check_accuracy(loader, model):
-    if loader.dataset.train:
+    if loader == train_data_loader:
         print("Checking accuracy on training data")
+    elif loader == validation_data_loader:
+        print("Checking accuracy on validation data")
     else:
         print("Checking accuracy on test data")
 
@@ -157,4 +159,3 @@ for epochs in range(num_epochs):
         check_accuracy(train_data_loader, model)
         check_accuracy(validation_data_loader, model)
         check_accuracy(test_data_loader, model)
-
