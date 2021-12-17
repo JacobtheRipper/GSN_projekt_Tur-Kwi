@@ -106,8 +106,8 @@ test_data_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuff
 
 composed_transform = transforms.ToTensor()
 
-CSV_DIR = "/dataset/content/fma/FMA_spectrograms/data_annot.csv"
-SPECTR_DIR = "/dataset/content/fma"
+CSV_DIR = "dataset/content/fma/FMA_spectrograms/data_annot.csv"
+SPECTR_DIR = "dataset/content/fma"
 
 dataset = customDataset(annotation_file=CSV_DIR, data_dir=SPECTR_DIR, transform=composed_transform)
 train_dataset, validation_dataset, test_dataset = torch.utils.data.random_split(dataset, [3576, 447, 447])  # using 80/10/10% (training/validation/test) ratio
