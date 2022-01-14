@@ -3,7 +3,7 @@ import torch.nn as nn # All neural network modules, nn.Linear, nn.Conv2d, BatchN
 import torch.optim as optim # For all Optimisation algorithms, SGD, Adam, etc.
 import torch.nn.functional as F # All functions that don't have any parameters
 from torch.utils.data import DataLoader # Gives easier dataset managment and creates mini batches
-# import torchvision.datasets as datasets # Has standard datasets that can be imported more easily
+#import torchvision.datasets as datasets # Has standard datasets that can be imported more easily, used only for testing
 import torchvision.transforms as transforms # Transformations that can be performed on the dataset
 from customDataset import customDataset
 
@@ -20,7 +20,6 @@ load_from_epoch = 20  # loads model that has been trained for 'load_from_epoch' 
 # "Exploring Data Augmentation to Improve Music Genre Classification with ConvNets" article
 # the input of this CNN is a grayscale 64x192 image containing mel spectrogram
 
-# TODO improve model by adding SVM at the end
 class ConvNet(nn.Module):
     def __init__(self, input_channels=input_channels, num_classes=num_classes):
         super(ConvNet, self).__init__()
@@ -30,6 +29,7 @@ class ConvNet(nn.Module):
         self.fc1 = nn.Linear(in_features=16*48*1, out_features=500)  # in_features = image_size*out_channels
         self.fc2 = nn.Linear(in_features=500, out_features=num_classes)
 
+# TODO improve the model by fixing dropout
     def forward(self, x):
         x = F.relu(self.conv1(x))
         x = self.max_pool(x)
@@ -46,7 +46,7 @@ x = torch.randn(64, 1, 64, 192)
 model = ConvNet()
 print(model(x).shape)
 
-# Function for evaluation
+# Function for evaluation of accuracy
 def check_accuracy(loader, model):
     if loader == train_data_loader:
         print("Checking accuracy on training data")
@@ -73,6 +73,36 @@ def check_accuracy(loader, model):
 
     model.train()
 
+# TODO write a function to compute precision
+'''
+# Function for evaluation of precision
+def check_precision(loader, model):
+    if loader == train_data_loader:
+        print("Checking precision on training data")
+    elif loader == validation_data_loader:
+        print("Checking precision on validation data")
+    else:
+        print("Checking precision on test data")
+    model.eval()
+
+
+    with torch.no_grad():
+        for x, y in loader:
+            x = x.to(device=device)
+            y = y.to(device=device)
+
+            scores = model(x)
+            _, predictions = scores.max(1)
+            num_correct += (predictions == y).sum()
+            num_samples += predictions.size(0)
+
+    print(f'Precision')
+
+    model.train()
+'''
+
+# TODO write a function to compute recall
+
 def save_checkpoint(state, current_epoch):
     print(f"===> Saving checkpoint at epoch: {current_epoch}")
     filename = "convnet_checkpoint_epoch_" + str(current_epoch) + ".pt"
@@ -91,20 +121,16 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # Initialise model
 model = ConvNet().to(device)
 
-# Load data from MNIST dataset
-# TODO remove this code
+# Load data from MNIST dataset - test code
 '''
 composed_transform = transforms.Compose([transforms.Resize(size=[256, 16]), transforms.ToTensor()])
-
 train_dataset = datasets.MNIST(root="dataset/", train=True, transform=composed_transform, download=True)
 train_data_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
-
 test_dataset = datasets.MNIST(root="dataset/", train=False, transform=composed_transform, download=True)
 test_data_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=True)
 '''
 
 # Load custom data from modified FMA small dataset
-# TODO make sure to use correct data directories
 
 composed_transform = transforms.Compose([transforms.ToPILImage(), transforms.Resize(size=[64, 192]), transforms.ToTensor()])
 
@@ -112,7 +138,8 @@ CSV_DIR = "dataset/content/fma/FMA_spectrograms/data_annot.csv"
 SPECTR_DIR = "dataset/content/fma"
 
 dataset = customDataset(annotation_file=CSV_DIR, data_dir=SPECTR_DIR, transform=composed_transform)
-train_dataset, validation_dataset, test_dataset = torch.utils.data.random_split(dataset, [3576, 447, 447])  # using 80/10/10% (training/validation/test) ratio
+dataset_length = len(dataset)
+train_dataset, validation_dataset, test_dataset = torch.utils.data.random_split(dataset, [0.8*dataset_length, 0.1*dataset_length, 0.1*dataset_length])  # using 80/10/10% (training/validation/test) ratio
 
 train_data_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
 validation_data_loader = DataLoader(dataset=validation_dataset, batch_size=batch_size, shuffle=True)
