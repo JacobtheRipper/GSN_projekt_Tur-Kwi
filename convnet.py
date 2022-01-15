@@ -131,8 +131,8 @@ test_data_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuff
 '''
 
 # Load custom data from modified FMA small dataset
-
-composed_transform = transforms.Compose([transforms.ToPILImage(), transforms.Resize(size=[64, 192]), transforms.ToTensor()])
+# Custom transform - increasing contrast for spectrograms
+composed_transform = transforms.Compose([transforms.ToPILImage(), transforms.Resize(size=[64, 192]), transforms.RandomAutocontrast(p=1.0) ,transforms.ToTensor()])
 
 CSV_DIR = "dataset/content/fma/FMA_spectrograms/data_annot.csv"
 SPECTR_DIR = "dataset/content/fma"
