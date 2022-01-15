@@ -29,7 +29,7 @@ class ConvNet(nn.Module):
         self.fc1 = nn.Linear(in_features=16*48*1, out_features=500)  # in_features = image_size*out_channels
         self.fc2 = nn.Linear(in_features=500, out_features=num_classes)
 
-# TODO improve the model by fixing dropout
+# Applying dropout fix in this method
     def forward(self, x):
         x = F.relu(self.conv1(x))
         x = self.max_pool(x)
@@ -37,7 +37,7 @@ class ConvNet(nn.Module):
         x = self.max_pool(x)
         x = x.reshape(x.shape[0], -1)
         x = self.fc1(x)
-        x = F.dropout(F.relu(x), p=0.5, training=True, inplace=False)
+        x = F.dropout(F.relu(x), p=0.5, training=True if self.training else False, inplace=False)
         x = self.fc2(x)
         return x
 
