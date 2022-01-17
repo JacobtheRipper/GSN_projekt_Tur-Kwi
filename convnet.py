@@ -21,6 +21,7 @@ load_from_epoch = 20  # loads model that has been trained for 'load_from_epoch' 
 # the input of this CNN is a grayscale 64x192 image containing mel spectrogram
 
 class ConvNet(nn.Module):
+    """CNN class inheriting from torch.nn.Module"""
     def __init__(self, input_channels=input_channels, num_classes=num_classes):
         super(ConvNet, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=input_channels, out_channels=1, kernel_size=(5, 5), stride=1, padding=2)  # output's shape is equal to its input shape
@@ -31,6 +32,7 @@ class ConvNet(nn.Module):
 
 # TODO improve the model by fixing dropout
     def forward(self, x):
+        """torch.nn.Module forward propagation method"""
         x = F.relu(self.conv1(x))
         x = self.max_pool(x)
         x = F.relu(self.conv2(x))
@@ -48,6 +50,7 @@ print(model(x).shape)
 
 # Function for evaluation of accuracy
 def check_accuracy(loader, model):
+    """Function for evaluation of accuracy"""
     if loader == train_data_loader:
         print("Checking accuracy on training data")
     elif loader == validation_data_loader:
@@ -104,11 +107,13 @@ def check_precision(loader, model):
 # TODO write a function to compute recall
 
 def save_checkpoint(state, current_epoch):
+    """Function for saving checkpoint during training"""
     print(f"===> Saving checkpoint at epoch: {current_epoch}")
     filename = "convnet_checkpoint_epoch_" + str(current_epoch) + ".pt"
     torch.save(state, filename)
 
 def load_checkpoint(starting_epoch):
+    """Function for loading checkpoint to start training"""
     print(f"===> Loading checkpoint at epoch: {starting_epoch}")
     filename = "convnet_checkpoint_epoch_" + str(starting_epoch) + ".pt"
     state = torch.load(filename)
